@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import '@fontsource/fira-code'
 import './globals.css'
-import FloatingBar from '@/components/FloatingBar'
+import HeaderBar from '@/components/HeaderBar'
 
 const appleSDGothicNeo = localFont({
   src: [
@@ -55,7 +55,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className={appleSDGothicNeo.variable}>
       <body>
-        <FloatingBar />
+        <HeaderBar />
         {children}
       </body>
     </html>

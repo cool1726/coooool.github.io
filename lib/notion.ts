@@ -18,6 +18,7 @@ export interface Post {
   blocks?: any[] // 원본 블록 구조
   author?: string // 저자
   tags?: string[] // 태그
+  category?: string // 카테고리
   readingTime?: number // 소요시간 (분)
   thumbnail?: string // 썸네일 이미지 URL
 }
@@ -130,6 +131,7 @@ export async function fetchNotionPosts(): Promise<Post[]> {
       const publishedDateProperty = (page as any).properties['Published Date']
       const lastUpdatedProperty = (page as any).properties['Last Updated']
       const tagsProperty = (page as any).properties.Tags
+      const categoryProperty = (page as any).properties.Category
       const authorProperty = (page as any).properties.Author
       const readingTimeProperty = (page as any).properties['Estimated Reading Time']
 
@@ -143,6 +145,14 @@ export async function fetchNotionPosts(): Promise<Post[]> {
       const tags: string[] = []
       if (tagsProperty?.multi_select) {
         tags.push(...tagsProperty.multi_select.map((tag: any) => tag.name))
+      }
+
+      // Category 필드에서 카테고리 추출
+      let category: string | undefined
+      if (categoryProperty) {
+        if (categoryProperty.type === 'select' && categoryProperty.select) {
+          category = categoryProperty.select.name
+        }
       }
 
       // Author 필드에서 저자 추출
@@ -178,6 +188,7 @@ export async function fetchNotionPosts(): Promise<Post[]> {
         date,
         author,
         tags: tags.length > 0 ? tags : undefined,
+        category,
         readingTime,
         thumbnail,
         blocks,
@@ -231,13 +242,91 @@ function getColorCSSVariable(color: string): string | null {
   return `var(--c-${cssColor}TexSec)`
 }
 
+// 텍스트에서 inline math를 찾아서 처리하는 헬퍼 함수
+function processInlineMath(text: string): string {
+  // Block math ($$...$$)는 여기서 처리하지 않음 (이미 처리됨)
+  // Inline math ($...$)만 처리
+  const inlineMathRegex = /\$([^$\n]+?)\$/g
+  let processedText = text
+  const matches: Array<{ match: string; expression: string; index: number }> = []
+  
+  let match
+  while ((match = inlineMathRegex.exec(text)) !== null) {
+    matches.push({
+      match: match[0],
+      expression: match[1],
+      index: match.index,
+    })
+  }
+  
+  // 역순으로 처리하여 인덱스가 변경되지 않도록 함
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const { match, expression, index } = matches[i]
+    const escapedExpression = expression.replace(/"/g, '&quot;')
+    const mathMarker = `<span class="katex-inline" data-katex-expression="${escapedExpression}" data-katex-type="inline"></span>`
+    processedText = processedText.substring(0, index) + mathMarker + processedText.substring(index + match.length)
+  }
+  
+  return processedText
+}
+
 // rich_text를 HTML로 변환하는 함수 (inline code 포함)
 function convertRichTextToHTML(richText: any[]): string {
   if (!richText || richText.length === 0) return ''
   
   return richText.map((item: any) => {
-    const text = item.plain_text || ''
+    let text = item.plain_text || ''
     const annotations = item.annotations || {}
+    
+    // equation 타입 처리 (rich_text 배열 내부의 inline equation)
+    if (item.type === 'equation') {
+      const equationExpression = item.equation?.expression || text
+      const escapedExpression = equationExpression.replace(/"/g, '&quot;')
+      
+      // 스타일 속성 수집
+      const styles: string[] = []
+      
+      if (annotations.bold) {
+        styles.push('font-weight: bold')
+      }
+      if (annotations.italic) {
+        styles.push('font-style: italic')
+      }
+      
+      const textDecorations: string[] = []
+      if (annotations.strikethrough) {
+        textDecorations.push('line-through')
+      }
+      if (annotations.underline) {
+        textDecorations.push('underline')
+      }
+      if (textDecorations.length > 0) {
+        styles.push(`text-decoration: ${textDecorations.join(' ')}`)
+      }
+      
+      const color = annotations.color
+      if (color && color !== 'default') {
+        const colorVar = getColorCSSVariable(color)
+        if (colorVar) {
+          if (color.endsWith('_background')) {
+            styles.push(`background-color: ${colorVar}`)
+          } else {
+            styles.push(`color: ${colorVar}`)
+          }
+        }
+      }
+      
+      const styleAttr = styles.length > 0 ? ` style="${styles.join('; ')}"` : ''
+      return `<span class="katex-inline" data-katex-expression="${escapedExpression}" data-katex-type="inline"${styleAttr}></span>`
+    }
+    
+    // inline code 처리 (code가 true이면 다른 스타일 무시, inline math도 처리하지 않음)
+    if (annotations.code) {
+      return `<span class="notion-inline-code-container" style="display:inline"><span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:#EB5757;border-radius:4px;font-size:85%;padding:0.2em 0.4em;position:relative;bottom:0.065em" data-token-index="0" spellcheck="false" class="notion-enable-hover">${text}</span></span>`
+    }
+    
+    // inline math 처리 (코드 블록이 아닌 경우에만)
+    text = processInlineMath(text)
     
     // link URL 확인
     // 1. text 타입의 경우: text.link.url 또는 href
@@ -251,11 +340,6 @@ function convertRichTextToHTML(richText: any[]): string {
     } else {
       // 기타 타입에서도 href가 있으면 사용
       linkUrl = item.href || null
-    }
-    
-    // inline code 처리 (code가 true이면 다른 스타일 무시)
-    if (annotations.code) {
-      return `<div class="notion-inline-code-container" style="display:inline"><span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:#EB5757;border-radius:4px;font-size:85%;padding:0.2em 0.4em;position:relative;bottom:0.065em" data-token-index="0" spellcheck="false" class="notion-enable-hover">${text}</span></div>`
     }
     
     // 스타일 속성 수집
@@ -305,7 +389,10 @@ function convertRichTextToHTML(richText: any[]): string {
         'text-decoration-color: var(--ca-opaLinDecCol)',
         'text-underline-offset: 10%',
         'opacity: 0.7',
-        'color: inherit' // 파란색 제거, 부모 색상 상속
+        'color: inherit', // 파란색 제거, 부모 색상 상속
+        'white-space: normal', // 줄바꿈 허용
+        'word-break: break-word', // 긴 단어도 줄바꿈
+        'overflow-wrap: break-word' // 긴 URL도 줄바꿈
       ]
       
       // 기존 스타일과 합치기 (link 스타일이 우선)
@@ -706,7 +793,8 @@ ${faviconUrl ? `<img class="notion-bookmark-favicon" src="${faviconUrl}" alt="" 
     
     case 'equation':
       const equationExpression = block.equation?.expression || ''
-      return equationExpression ? `$$\n${equationExpression}\n$$\n\n` : ''
+      // react-katex를 위한 특별한 마커 사용 (data 속성으로 식별 가능하도록)
+      return equationExpression ? `<div class="katex-block" data-katex-expression="${equationExpression.replace(/"/g, '&quot;')}" data-katex-type="block"></div>\n\n` : ''
     
     case 'table':
       const tableWidth = block.table?.table_width || 0
@@ -887,5 +975,37 @@ export async function getPostById(id: string): Promise<Post | null> {
   }
   
   return null
+}
+
+export async function getPostsByCategory(category: string): Promise<Post[]> {
+  const posts = await getPosts()
+  return posts.filter((post) => post.category === category)
+}
+
+export async function getAllCategories(): Promise<string[]> {
+  const posts = await getPosts()
+  const categories = new Set<string>()
+  posts.forEach((post) => {
+    if (post.category) {
+      categories.add(post.category)
+    }
+  })
+  return Array.from(categories).sort()
+}
+
+export async function getPostsByTag(tag: string): Promise<Post[]> {
+  const posts = await getPosts()
+  return posts.filter((post) => post.tags && post.tags.includes(tag))
+}
+
+export async function getAllTags(): Promise<string[]> {
+  const posts = await getPosts()
+  const tags = new Set<string>()
+  posts.forEach((post) => {
+    if (post.tags && post.tags.length > 0) {
+      post.tags.forEach((tag) => tags.add(tag))
+    }
+  })
+  return Array.from(tags).sort()
 }
 

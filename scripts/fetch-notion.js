@@ -135,6 +135,7 @@ async function fetchNotionPosts(filterDate = null, fetchAll = false) {
       const publishedDateProperty = page.properties['Published Date']
       const lastUpdatedProperty = page.properties['Last Updated']
       const tagsProperty = page.properties.Tags
+      const categoryProperty = page.properties.Category
       const authorProperty = page.properties.Author
       const readingTimeProperty = page.properties['Estimated Reading Time']
 
@@ -148,6 +149,14 @@ async function fetchNotionPosts(filterDate = null, fetchAll = false) {
       const tags = []
       if (tagsProperty?.multi_select) {
         tags.push(...tagsProperty.multi_select.map(tag => tag.name))
+      }
+
+      // Category 필드에서 카테고리 추출
+      let category
+      if (categoryProperty) {
+        if (categoryProperty.type === 'select' && categoryProperty.select) {
+          category = categoryProperty.select.name
+        }
       }
 
       // Author 필드에서 저자 추출
@@ -183,6 +192,7 @@ async function fetchNotionPosts(filterDate = null, fetchAll = false) {
         date,
         author,
         tags: tags.length > 0 ? tags : undefined,
+        category,
         readingTime,
         thumbnail,
         blocks,

@@ -2,10 +2,14 @@ import { marked } from 'marked'
 import { getPostBySlug, getPosts, convertBlockToText } from '@/lib/notion'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import TableOfContents from '@/components/TableOfContents'
+import BackLink from '@/components/BackLink'
+import PostNavLinks from '@/components/PostNavLinks'
+import GiscusComments from '@/components/GiscusComments'
 import { Client } from '@notionhq/client'
 import { createHighlighter } from 'shiki'
-import { ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react'
+import MathContent from '@/components/MathContent'
 
 // 소요시간 계산 함수 (분 단위)
 function calculateReadingTime(text: string): number {
@@ -60,11 +64,15 @@ export default async function PostPage({
     notFound()
   }
 
-  // 이전 글과 다음 글 가져오기
+  // 모든 글 가져오기 (카테고리 필터링은 클라이언트에서 처리)
   const allPosts = await getPosts()
+  // 날짜 기준 내림차순 정렬 (최신순)
+  allPosts.sort((a, b) => b.date.localeCompare(a.date))
   const currentIndex = allPosts.findIndex((p) => p.slug === slug)
-  const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null
-  const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null
+  
+  // 기본 이전/다음 글 (전체 글 기준)
+  const defaultPrevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null
+  const defaultNextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null
 
   // 블록 구조가 있으면 실시간으로 파싱, 없으면 기존 content 사용 (하위 호환성)
   let processedContent = ''
@@ -87,7 +95,7 @@ export default async function PostPage({
 
   // shiki 하이라이터 초기화
   const highlighter = await createHighlighter({
-    themes: ['one-dark-pro', 'github-light'],
+    themes: ['one-dark-pro', 'catppuccin-latte'],
     langs: ['javascript', 'typescript', 'jsx', 'tsx', 'python', 'java', 'cpp', 'c', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift', 'kotlin', 'scala', 'html', 'css', 'scss', 'sass', 'less', 'json', 'yaml', 'yml', 'toml', 'xml', 'markdown', 'md', 'bash', 'shell', 'sh', 'sql', 'dockerfile', 'diff', 'text', 'plaintext'],
   })
 
@@ -97,21 +105,46 @@ export default async function PostPage({
     const lang = language || 'text'
     
     try {
-      // shiki로 하이라이팅 (one-dark-pro 테마 사용 - VS Code 스타일)
-      const html = highlighter.codeToHtml(code, {
+      // shiki로 하이라이팅 - 두 테마 모두 렌더링
+      const darkHtml = highlighter.codeToHtml(code, {
         lang: lang,
         theme: 'one-dark-pro',
+      })
+      
+      const lightHtml = highlighter.codeToHtml(code, {
+        lang: lang,
+        theme: 'catppuccin-latte',
       })
       
       // 언어 라벨 추가 (선택사항)
       const langLabel = lang !== 'text' ? `<div class="shiki-lang-label">${lang}</div>` : ''
       
-      // shiki가 생성한 HTML을 감싸서 더 예쁘게 스타일링
-      return `<div class="shiki-container">${langLabel}${html}</div>`
+      // 두 테마를 모두 포함하고 CSS로 전환
+      return `<div class="shiki-container">
+        ${langLabel}
+        <div class="shiki-theme shiki-dark" data-theme="dark">${darkHtml}</div>
+        <div class="shiki-theme shiki-light" data-theme="light">${lightHtml}</div>
+      </div>`
     } catch (error) {
       // 언어를 인식하지 못하면 기본 코드 블록으로 렌더링
       return `<pre><code class="language-${lang}">${code}</code></pre>`
     }
+  }
+
+  // 이미지 렌더러 커스터마이징 - 외부 URL 이미지 직접 로드
+  renderer.image = (href: string | null, title: string | null, text: string) => {
+    if (!href) return ''
+    
+    // href가 URL인 경우 (http:// 또는 https://로 시작)
+    const isExternalUrl = href.startsWith('http://') || href.startsWith('https://')
+    
+    // 외부 URL이거나 상대 경로인 경우 모두 직접 로드
+    const imageSrc = isExternalUrl ? href : href
+    
+    const alt = text || ''
+    const titleAttr = title ? ` title="${title.replace(/"/g, '&quot;')}"` : ''
+    
+    return `<img src="${imageSrc.replace(/"/g, '&quot;')}" alt="${alt.replace(/"/g, '&quot;')}"${titleAttr} loading="lazy" />`
   }
 
   // callout 내부 마크다운 처리
@@ -144,10 +177,9 @@ export default async function PostPage({
   return (
     <main className="post-content-wrapper">
       <div className="post-content post-content-desktop">
-        <Link href="/" className="back-link">
-          <ArrowLeft size={18} className="back-link-icon" />
-          목록으로 돌아가기
-        </Link>
+        <Suspense fallback={<div className="back-link">목록으로 돌아가기</div>}>
+          <BackLink post={post} />
+        </Suspense>
         <article className="post-article-desktop">
           <h1 className="post-title-desktop">{post.title}</h1>
           <div className="post-header-info">
@@ -168,32 +200,18 @@ export default async function PostPage({
           </div>
           <hr className="post-divider" />
           <div className="notion-page-content-desktop">
-            <div
-              className="post-body post-body-desktop"
-              dangerouslySetInnerHTML={{ __html: htmlContent }}
-            />
+            <MathContent html={htmlContent} />
           </div>
         </article>
-        <nav className="post-navigation">
-          {prevPost && (
-            <Link href={`/posts/${encodeURIComponent(prevPost.slug)}`} className="post-nav-link post-nav-prev">
-              <ChevronLeft className="post-nav-icon" size={20} />
-              <div className="post-nav-content">
-                <span className="post-nav-label">이전 글</span>
-                <span className="post-nav-title">{prevPost.title}</span>
-              </div>
-            </Link>
-          )}
-          {nextPost && (
-            <Link href={`/posts/${encodeURIComponent(nextPost.slug)}`} className="post-nav-link post-nav-next">
-              <div className="post-nav-content">
-                <span className="post-nav-label">다음 글</span>
-                <span className="post-nav-title">{nextPost.title}</span>
-              </div>
-              <ChevronRight className="post-nav-icon" size={20} />
-            </Link>
-          )}
-        </nav>
+        <Suspense fallback={null}>
+          <PostNavLinks
+            post={post}
+            allPosts={allPosts}
+            defaultPrevPost={defaultPrevPost}
+            defaultNextPost={defaultNextPost}
+          />
+        </Suspense>
+        <GiscusComments />
       </div>
       <TableOfContents content={htmlContent} />
     </main>

@@ -29,32 +29,46 @@ body {
   color: #e0e0e0;
 }
 
-/* Floating Bar 스타일 */
-.floating-bar {
+/* Header Bar 스타일 */
+.header-bar {
   position: fixed;
-  top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  width: fit-content;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  transform: translateY(0);
+  opacity: 1;
 }
 
-.floating-bar-content {
+.header-bar-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.header-bar-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.header-bar-content {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  max-width: 1200px;
+  width: 100%;
+  justify-content: center;
 }
 
-.floating-bar-item {
+.header-bar-item {
   display: flex;
   align-items: center;
   gap: 0.375rem;
@@ -70,37 +84,322 @@ body {
   font-family: inherit;
 }
 
-.floating-bar-item:hover {
+.header-bar-item:hover {
   background-color: #f5f5f5;
   color: #0066cc;
 }
 
-.floating-bar-item span {
+.header-bar-item span {
   display: inline;
 }
 
-.floating-bar-logo {
+.header-bar-logo {
   font-weight: 600;
   font-size: 0.9375rem;
 }
 
-.floating-bar-dark-mode {
+.header-bar-dark-mode {
   padding: 0.5rem;
 }
 
-/* 다크모드 Floating Bar 스타일 */
-.dark .floating-bar {
+/* 다크모드 Header Bar 스타일 */
+.dark .header-bar {
   background: rgba(26, 26, 26, 0.95);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.dark .floating-bar-item {
+.dark .header-bar-item {
   color: #e0e0e0;
 }
 
-.dark .floating-bar-item:hover {
+.dark .header-bar-item:hover {
   background-color: #333;
   color: #0066cc;
+}
+
+/* 검색바 스타일 */
+.search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.search-bar-container {
+  width: 100%;
+  max-width: 708px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+  margin: 0 1rem;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.search-bar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #0066cc;
+  background-color: #fff;
+}
+
+.search-icon {
+  color: #888;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-clear-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.search-clear-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.search-close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.search-close-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.search-results {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.search-results-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-result-item {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+  background-color: #f5f5f5;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.search-result-category {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #e8f4fd;
+  color: #0066cc;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.search-result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.search-result-tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.search-loading,
+.search-no-results,
+.search-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #999;
+}
+
+/* 다크모드 검색바 */
+.dark .search-bar-container {
+  background-color: #1a1a1a;
+  border-color: #333;
+}
+
+.dark .search-bar-header {
+  border-bottom-color: #333;
+}
+
+.dark .search-input-wrapper {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+.dark .search-input-wrapper:focus-within {
+  background-color: #333;
+  border-color: #0066cc;
+}
+
+.dark .search-input {
+  color: #e0e0e0;
+}
+
+.dark .search-input::placeholder {
+  color: #666;
+}
+
+.dark .search-icon {
+  color: #999;
+}
+
+.dark .search-clear-button {
+  color: #999;
+}
+
+.dark .search-clear-button:hover {
+  background-color: #333;
+  color: #e0e0e0;
+}
+
+.dark .search-close-button {
+  color: #999;
+}
+
+.dark .search-close-button:hover {
+  background-color: #333;
+  color: #e0e0e0;
+}
+
+.dark .search-result-item {
+  border-bottom-color: #333;
+}
+
+.dark .search-result-item:hover {
+  background-color: #2a2a2a;
+}
+
+.dark .search-result-title {
+  color: #e0e0e0;
+}
+
+.dark .search-result-category {
+  background-color: rgba(0, 102, 204, 0.2);
+  color: #0066cc;
+}
+
+.dark .search-result-tag {
+  background-color: #333;
+  color: #ccc;
+}
+
+.dark .search-loading,
+.dark .search-no-results,
+.dark .search-empty {
+  color: #999;
+}
+
+.search-query-text {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.5rem;
+  font-weight: 400;
+}
+
+.dark .search-query-text {
+  color: #999;
 }
 
 /* 메인 페이지 스타일 */
@@ -108,17 +407,11 @@ body {
   max-width: 708px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  padding-top: calc(2rem + 60px); /* 헤더 높이만큼 추가 여백 */
 }
 
 .home-container .home-header {
-  margin-bottom: 6rem;
-}
-
-.home-container .blog-title {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: #1a1a1a;
-  margin: 0;
+  margin-bottom: 1.5rem;
 }
 
 .home-container .posts-section {
@@ -189,11 +482,141 @@ body {
   margin-top: 3rem;
 }
 
-/* 메인 페이지 다크모드 */
-.dark .home-container .blog-title {
-  color: #e0e0e0;
+/* 카테고리 그룹 스타일 */
+.category-group-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
+.category-group-title a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.category-group-title a:hover {
+  color: #0066cc;
+}
+
+.category-post-count {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #888;
+}
+
+.category-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2rem;
+}
+
+/* 카테고리 페이지 스타일 */
+.categories-page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2rem;
+}
+
+.categories-section {
+  margin-top: 1rem;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.category-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-align: left;
+}
+
+.category-list-item:hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
+.category-list-item.active {
+  background-color: #0066cc;
+  color: #fff;
+  border-color: #0066cc;
+}
+
+.category-list-item.active:hover {
+  background-color: #0052a3;
+  border-color: #0052a3;
+}
+
+.category-list-name {
+  font-weight: 500;
+}
+
+.category-list-count {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.category-list-item.active .category-list-count {
+  opacity: 0.9;
+}
+
+.selected-category-posts {
+  margin-top: 2rem;
+}
+
+.selected-category-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* 로딩 스타일 */
+.loading-container {
+  text-align: center;
+  padding: 3rem 0;
+  color: #888;
+}
+
+.loading-more-container {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.loading-more {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* 메인 페이지 다크모드 */
 .dark .home-container .post-title {
   color: #e0e0e0;
 }
@@ -215,6 +638,190 @@ body {
   color: #999;
 }
 
+.dark .category-group-title {
+  color: #e0e0e0;
+}
+
+.dark .category-group-title a:hover {
+  color: #0066cc;
+}
+
+.dark .category-post-count {
+  color: #999;
+}
+
+.dark .category-title {
+  color: #e0e0e0;
+}
+
+.dark .categories-page-title {
+  color: #e0e0e0;
+}
+
+.dark .category-list {
+  border-bottom-color: #333;
+}
+
+.dark .category-list-item {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #333;
+}
+
+.dark .category-list-item:hover {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+.dark .category-list-item.active {
+  background-color: #0066cc;
+  color: #fff;
+  border-color: #0066cc;
+}
+
+.dark .category-list-item.active:hover {
+  background-color: #0052a3;
+  border-color: #0052a3;
+}
+
+.dark .selected-category-title {
+  color: #e0e0e0;
+}
+
+.dark .loading-container,
+.dark .loading-more {
+  color: #999;
+}
+
+/* 태그 페이지 스타일 */
+.tags-section-header {
+  margin-bottom: 1rem;
+}
+
+.tags-header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.tags-total-count {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.tags-toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tags-toggle-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  transition: max-height 0.3s ease, overflow 0.3s ease;
+}
+
+.tags-container:not(.expanded) {
+  max-height: 256px; /* 8줄 높이 (32px * 8) */
+  overflow: hidden;
+}
+
+.tag-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.85rem;
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.9375rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tag-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.tag-button.active {
+  background-color: #0066cc;
+  color: #fff;
+}
+
+.tag-button.active:hover {
+  background-color: #0052a3;
+}
+
+.tag-name {
+  font-weight: 500;
+}
+
+.tag-count {
+  font-size: 0.8125rem;
+  opacity: 0.8;
+}
+
+.tag-button.active .tag-count {
+  opacity: 0.9;
+}
+
+/* 다크모드 태그 페이지 */
+.dark .tags-total-count {
+  color: #999;
+}
+
+.dark .tags-toggle-button {
+  background-color: #333;
+  border-color: #444;
+  color: #ccc;
+}
+
+.dark .tags-toggle-button:hover {
+  background-color: #444;
+  color: #e0e0e0;
+}
+
+.dark .tag-button {
+  background-color: #333;
+  color: #ccc;
+}
+
+.dark .tag-button:hover {
+  background-color: #444;
+  color: #e0e0e0;
+}
+
+.dark .tag-button.active {
+  background-color: #0066cc;
+  color: #fff;
+}
+
+.dark .tag-button.active:hover {
+  background-color: #0052a3;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .home-container .post-title {
@@ -224,9 +831,9 @@ body {
 
 /* 포스트 상세 페이지용 wrapper (메인 페이지와 구분) */
 main.post-content-wrapper {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  padding-top: calc(2rem + 60px); /* 헤더 높이만큼 추가 여백 */
 }
 
 .post-content {
@@ -263,11 +870,6 @@ main.post-content-wrapper {
   color: #e0e0e0;
 }
 
-.dark .post-meta-desktop {
-  color: #999;
-  border-bottom-color: #333;
-}
-
 .dark .post-header-meta {
   color: #999;
 }
@@ -293,6 +895,27 @@ main.post-content-wrapper {
 
 .dark .post-divider {
   border-top-color: #333;
+}
+
+/* 포스팅 네비게이션 다크모드 */
+.dark .post-navigation {
+  border-top-color: #333;
+}
+
+.dark .post-nav-link {
+  background: transparent;
+  color: #e0e0e0;
+}
+
+.dark .post-nav-link:hover {
+  background-color: #333;
+  color: #0066cc;
+}
+
+.dark .post-nav-label,
+.dark .post-nav-title,
+.dark .post-nav-icon {
+  color: inherit;
 }
 
 /* Table of Contents 공통 스타일 */
@@ -349,50 +972,42 @@ main.post-content-wrapper {
 /* 큰 화면: 데스크톱 TOC (우측, floating) */
 @media (min-width: 1024px) {
   .post-content-wrapper {
-    display: grid;
-    grid-template-columns: minmax(96px, 1fr) minmax(auto, 708px) minmax(96px, 1fr) minmax(280px, 280px);
-    gap: 0;
+    position: relative;
     max-width: 100%;
     padding: 2rem 0;
+    padding-top: calc(2rem + 60px); /* 헤더 높이만큼 추가 여백 */
     overflow-x: hidden;
   }
 
   .post-content-desktop {
-    grid-column: 2;
-    max-width: none;
-    margin: 0;
+    max-width: 708px;
+    margin: 0 auto;
   }
 
   .table-of-contents {
     display: block;
-    grid-column: 4;
-    grid-row: 1;
-    width: 100%;
+    width: 240px;
     min-width: 200px;
     max-width: 240px;
-    position: absolute;
-    align-self: flex-start;
+    position: fixed;
+    top: 0;
     background: transparent;
     border: none;
     font-size: 0.875rem;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
-    right: 0;
-    left: auto;
+    z-index: 9999;
   }
 
   /* 본문 시작 위치에 맞춰서 위치 (JavaScript에서 동적으로 설정) */
   .table-of-contents:not(.toc-floating) {
-    position: absolute;
-    right: 0;
-    left: auto;
+    position: fixed;
   }
 
   /* 스크롤 시 floating 상태 */
   .table-of-contents.toc-floating {
-    padding-right: 20px;
+    padding-right: 0;
     padding-left: 0;
-    margin-left: 48px;
     width: 240px;
     max-height: calc(100vh - 185px);
     overflow-y: auto;
@@ -407,13 +1022,6 @@ main.post-content-wrapper {
     line-height: 1.2;
     margin-bottom: 1rem;
     color: #1a1a1a;
-  }
-
-  .post-meta-desktop {
-    color: #888;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e0e0e0;
   }
 
   /* 포스트 헤더 정보 스타일 */
@@ -487,21 +1095,19 @@ main.post-content-wrapper {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    border: 1px solid #e0e0e0;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: none;
     border-radius: 8px;
     text-decoration: none;
-    color: inherit;
+    color: #333;
     transition: all 0.2s;
-    background-color: #fafafa;
+    background: transparent;
   }
 
   .post-nav-link:hover {
-    border-color: #0066cc;
-    background-color: #f0f7ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #f5f5f5;
+    color: #0066cc;
   }
 
   .post-nav-content {
@@ -568,6 +1174,17 @@ main.post-content-wrapper {
     justify-content: flex-end;
   }
 
+  /* Giscus 댓글 영역 스타일 */
+  .giscus-comments {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .dark .giscus-comments {
+    border-top-color: #333;
+  }
+
   .notion-page-content-desktop {
     flex-shrink: 0;
     flex-grow: 1;
@@ -584,76 +1201,19 @@ main.post-content-wrapper {
     padding-inline: 0px;
   }
 
-  .post-body-desktop {
-    width: 100%;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 80px;
-  }
-
-  .post-body-desktop > * {
-    width: 100%;
-    color: inherit;
-    fill: inherit;
-  }
-
-  .post-body-desktop ul,
-  .post-body-desktop ol,
-  .post-body-desktop blockquote,
-  .post-body-desktop pre {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .post-body-desktop p {
-    max-width: 100%;
-    width: 100%;
-    white-space: break-spaces;
-    word-break: break-word;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    padding-inline: 2px;
-    font-size: 16px;
-    margin: 0;
-  }
-
-  .post-body-desktop h1,
-  .post-body-desktop h2,
-  .post-body-desktop h3 {
-    scroll-margin-top: 100px;
-  }
-
-  .post-body-desktop h1 {
-    font-size: 1.875em;
-    margin-top: 2rem;
-    /* margin-bottom: 1rem; */
-    color: #1a1a1a;
-  }
-
-  .post-body-desktop h2 {
-    font-size: 1.5em;
-    margin-top: 2rem;
-    /* margin-bottom: 1rem; */
-    color: #1a1a1a;
-  }
-
-  .post-body-desktop h3 {
-    font-size: 1.25em;
-    margin-top: 1.5rem;
-    /* margin-bottom: 0.75rem; */
-    color: #1a1a1a;
-  }
-
   /* Notion List Block 스타일 */
   .post-body-desktop .notion-bulleted-list-block,
-  .post-body-desktop .notion-numbered-list-block {
+  .post-body-desktop .notion-numbered-list-block,
+  .post-body .notion-bulleted-list-block,
+  .post-body .notion-numbered-list-block {
     width: 100%;
     max-width: 100%;
     margin-top: 1px;
     margin-bottom: 1px;
   }
 
-  .post-body-desktop .notion-list-item-inner {
+  .post-body-desktop .notion-list-item-inner ,
+  .post-body .notion-list-item-inner {
     display: flex;
     align-items: flex-start;
     width: 100%;
@@ -662,7 +1222,8 @@ main.post-content-wrapper {
     fill: inherit;
   }
 
-  .post-body-desktop .notion-list-item-box-left {
+  .post-body-desktop .notion-list-item-box-left ,
+  .post-body .notion-list-item-box-left {
     user-select: none;
     margin-inline-end: 2px;
     width: 24px;
@@ -674,44 +1235,52 @@ main.post-content-wrapper {
     min-height: calc(1.5em + 6px);
   }
 
-  .post-body-desktop .notion-list-item-box-left.notion-numbered-box {
+  .post-body-desktop .notion-list-item-box-left.notion-numbered-box ,
+  .post-body .notion-list-item-box-left.notion-numbered-box {
     width: unset;
   }
 
-  .post-body-desktop .notion-list-item-marker {
+  .post-body-desktop .notion-list-item-marker ,
+  .post-body .notion-list-item-marker {
     font-size: 1.5em;
     line-height: 1;
     margin-bottom: 0;
     font-family: Arial;
   }
 
-  .post-body-desktop .notion-list-item-marker::before {
+  .post-body-desktop .notion-list-item-marker::before ,
+  .post-body .notion-list-item-marker::before {
     content: '•';
   }
 
-  .post-body-desktop .notion-list-item-number {
+  .post-body-desktop .notion-list-item-number ,
+  .post-body .notion-list-item-number {
     width: 24px;
     text-align: center;
     white-space: nowrap;
   }
 
-  .post-body-desktop .notion-numbered-list-block {
+  .post-body-desktop .notion-numbered-list-block ,
+  .post-body .notion-numbered-list-block {
     counter-increment: notion-list-counter;
   }
 
-  .post-body-desktop .notion-list-item-number::before {
+  .post-body-desktop .notion-list-item-number::before ,
+  .post-body .notion-list-item-number::before {
     content: counter(notion-list-counter) '.';
   }
 
-  .post-body-desktop .notion-list-item-content-wrapper {
+  .post-body-desktop .notion-list-item-content-wrapper ,
+  .post-body .notion-list-item-content-wrapper {
     flex: 1 1 0px;
     min-width: 1px;
     display: flex;
     flex-direction: column;
   }
 
-  .post-body-desktop .notion-list-item-content {
-    display: flex;
+  .post-body-desktop .notion-list-item-content ,
+  .post-body .notion-list-item-content {
+    /* display: flex; */
     max-width: 100%;
     width: 100%;
     white-space: break-spaces;
@@ -724,7 +1293,8 @@ main.post-content-wrapper {
     font-size: 16px;
   }
 
-  .post-body-desktop .notion-list-item-children {
+  .post-body-desktop .notion-list-item-children ,
+  .post-body .notion-list-item-children {
     width: 100%;
     margin-top: 0;
     margin-bottom: 0;
@@ -733,7 +1303,8 @@ main.post-content-wrapper {
   }
 
   /* Reset counter for numbered lists */
-  .post-body-desktop .notion-page-content-desktop {
+  .post-body-desktop .notion-page-content-desktop,
+  .post-body .notion-page-content-desktop {
     counter-reset: notion-list-counter;
   }
 
@@ -747,20 +1318,25 @@ main.post-content-wrapper {
   .post-body-desktop blockquote,
   .post-body-desktop .notion-callout,
   .post-body-desktop .notion-to-do-block,
-  .post-body-desktop details {
+  .post-body-desktop details,
+  .post-body .notion-bulleted-list-block,
+  .post-body p,
+  .post-body h1,
+  .post-body h2,
+  .post-body h3,
+  .post-body pre,
+  .post-body blockquote,
+  .post-body .notion-callout,
+  .post-body .notion-to-do-block,
+  .post-body details {
     counter-reset: notion-list-counter;
   }
 
-  /* Reset ul, ol 기본 스타일 */
-  .post-body-desktop ul,
-  .post-body-desktop ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+  /* Reset ul, ol 기본 스타일 - 미디어 쿼리 내부에서는 데스크톱만 (공통 스타일은 위에 정의됨) */
 
   /* 인라인 코드 (shiki 코드 블록 내부가 아닌 경우만) */
-  .post-body-desktop code:not(pre code) {
+  .post-body-desktop code:not(pre code) ,
+  .post-body code:not(pre code) {
     background-color: #f5f5f5;
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
@@ -770,7 +1346,8 @@ main.post-content-wrapper {
   }
 
   /* shiki로 하이라이팅된 코드 블록은 인라인 스타일을 사용하므로 기본 스타일만 적용 */
-  .post-body-desktop pre:not(.shiki) {
+  .post-body-desktop pre:not(.shiki) ,
+  .post-body pre:not(.shiki) {
     background-color: #f5f5f5;
     padding: 1rem;
     border-radius: 5px;
@@ -780,17 +1357,48 @@ main.post-content-wrapper {
   }
 
   /* shiki 코드 블록 컨테이너 - 예쁜 스타일 적용 */
-  .post-body-desktop .shiki-container {
+  .post-body-desktop .shiki-container ,
+  .post-body .shiki-container {
     position: relative;
     margin: 1.5rem 0;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: #ffffff; /* 라이트 모드 기본 배경 */
+  }
+
+  /* 다크 모드: 다크 배경 */
+  .dark .post-body-desktop .shiki-container ,
+  .dark .post-body .shiki-container {
     background: #282c34;
   }
 
+  /* shiki 테마 전환 - 다크/라이트 모드에 따라 표시 */
+  .post-body-desktop .shiki-theme ,
+  .post-body .shiki-theme {
+    display: none;
+  }
+
+  /* 라이트 모드: github-light 표시 */
+  .post-body-desktop .shiki-light ,
+  .post-body .shiki-light {
+    display: block;
+  }
+
+  /* 다크 모드: one-dark-pro 표시 */
+  .dark .post-body-desktop .shiki-light ,
+  .dark .post-body .shiki-light {
+    display: none;
+  }
+
+  .dark .post-body-desktop .shiki-dark ,
+  .dark .post-body .shiki-dark {
+    display: block;
+  }
+
   /* 복사 버튼 스타일 */
-  .post-body-desktop .shiki-copy-button {
+  .post-body-desktop .shiki-copy-button ,
+  .post-body .shiki-copy-button {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
@@ -798,8 +1406,8 @@ main.post-content-wrapper {
     align-items: center;
     gap: 0.375rem;
     padding: 0.5rem 0.75rem;
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.6);
     border: none;
     border-radius: 6px;
     font-size: 0.75rem;
@@ -811,38 +1419,57 @@ main.post-content-wrapper {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   }
 
-  .post-body-desktop .shiki-copy-button:hover {
+  .post-body-desktop .shiki-copy-button:hover ,
+  .post-body .shiki-copy-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  /* 다크 모드: 복사 버튼 스타일 */
+  .dark .post-body-desktop .shiki-copy-button ,
+  .dark .post-body .shiki-copy-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .dark .post-body-desktop .shiki-copy-button:hover ,
+  .dark .post-body .shiki-copy-button:hover {
     background: rgba(255, 255, 255, 0.15);
     color: rgba(255, 255, 255, 0.9);
   }
 
-  .post-body-desktop .shiki-copy-button:active {
+  .post-body-desktop .shiki-copy-button:active ,
+  .post-body .shiki-copy-button:active {
     transform: scale(0.95);
   }
 
-  .post-body-desktop .shiki-copy-button.copied {
+  .post-body-desktop .shiki-copy-button.copied ,
+  .post-body .shiki-copy-button.copied {
     background: rgba(76, 175, 80, 0.2);
     color: #4caf50;
   }
 
-  .post-body-desktop .shiki-copy-button svg {
+  .post-body-desktop .shiki-copy-button svg ,
+  .post-body .shiki-copy-button svg {
     flex-shrink: 0;
     width: 16px;
     height: 16px;
   }
 
-  .post-body-desktop .shiki-copy-text {
+  .post-body-desktop .shiki-copy-text ,
+  .post-body .shiki-copy-text {
     line-height: 1;
   }
 
   /* 언어 라벨 스타일 (복사 버튼이 있을 때 위치 조정) */
-  .post-body-desktop .shiki-lang-label {
+  .post-body-desktop .shiki-lang-label ,
+  .post-body .shiki-lang-label {
     position: absolute;
     top: 0;
     right: 0;
     padding: 0.375rem 0.75rem;
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
     font-size: 0.75rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -853,13 +1480,22 @@ main.post-content-wrapper {
     backdrop-filter: blur(4px);
   }
 
+  /* 다크 모드: 언어 라벨 스타일 */
+  .dark .post-body-desktop .shiki-lang-label ,
+  .dark .post-body .shiki-lang-label {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
   /* 복사 버튼이 있을 때 언어 라벨 위치 조정 */
-  .post-body-desktop .shiki-container:has(.shiki-copy-button) .shiki-lang-label {
+  .post-body-desktop .shiki-container:has(.shiki-copy-button) .shiki-lang-label ,
+  .post-body .shiki-container:has(.shiki-copy-button) .shiki-lang-label {
     top: 3rem;
   }
 
   /* shiki 코드 블록 - 인라인 스타일을 존중하고 최소한의 레이아웃만 적용 */
-  .post-body-desktop .shiki-container pre.shiki {
+  .post-body-desktop .shiki-container pre.shiki ,
+  .post-body .shiki-container pre.shiki {
     margin: 0;
     border-radius: 0;
     padding: 1.25rem !important;
@@ -868,7 +1504,8 @@ main.post-content-wrapper {
   }
 
   /* shiki 코드 블록 내부의 요소들은 shiki의 인라인 스타일을 사용 */
-  .post-body-desktop .shiki-container pre.shiki code {
+  .post-body-desktop .shiki-container pre.shiki code ,
+  .post-body .shiki-container pre.shiki code {
     background: none !important;
     padding: 0 !important;
     border-radius: 0 !important;
@@ -877,30 +1514,82 @@ main.post-content-wrapper {
   }
 
   /* 스크롤바 스타일링 (웹킷 브라우저) */
-  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar {
+  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar ,
+  .post-body .shiki-container pre.shiki::-webkit-scrollbar {
     height: 8px;
   }
 
-  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar-track {
+  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar-track ,
+  .post-body .shiki-container pre.shiki::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.2);
   }
 
-  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar-thumb {
+  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar-thumb ,
+  .post-body .shiki-container pre.shiki::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
   }
 
-  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar-thumb:hover {
+  .post-body-desktop .shiki-container pre.shiki::-webkit-scrollbar-thumb:hover ,
+  .post-body .shiki-container pre.shiki::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
   }
 
-  .post-body-desktop pre:not(.shiki) code {
+  .post-body-desktop pre:not(.shiki) code ,
+  .post-body pre:not(.shiki) code {
     background-color: transparent;
     padding: 0;
     font-family: inherit;
   }
 
-  .post-body-desktop .notion-callout {
+  /* KaTeX 수식 스타일 */
+  .post-body-desktop .katex-block ,
+  .post-body .katex-block {
+    margin: 1.5em 0;
+    text-align: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .post-body-desktop .katex-block .katex ,
+  .post-body .katex-block .katex {
+    font-size: 1.1em;
+  }
+
+  .post-body-desktop .katex-inline ,
+  .post-body .katex-inline {
+    display: inline-block;
+    margin: 0 0.2em;
+  }
+
+  .post-body-desktop .katex-inline .katex ,
+  .post-body .katex-inline .katex {
+    font-size: 1em;
+  }
+
+  .post-body-desktop .katex-error ,
+  .post-body .katex-error {
+    color: #d32f2f;
+    background-color: rgba(211, 47, 47, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+
+  /* 다크모드에서 KaTeX 스타일 조정 */
+  .dark .post-body-desktop .katex ,
+  .post-body .katex {
+    color: inherit;
+  }
+
+  .dark .post-body-desktop .katex-error ,
+  .post-body .katex-error {
+    color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.1);
+  }
+
+  .post-body-desktop .notion-callout ,
+  .post-body .notion-callout {
     display: flex;
     gap: 0.75rem;
     padding: 1rem;
@@ -908,61 +1597,71 @@ main.post-content-wrapper {
   }
 
   /* 아이콘이 없을 때 gap 제거 */
-  .post-body-desktop .notion-callout:not(:has(.notion-callout-icon)) {
+  .post-body-desktop .notion-callout:not(:has(.notion-callout-icon)) ,
+  .post-body .notion-callout:not(:has(.notion-callout-icon)) {
     gap: 0;
   }
 
   /* Callout 기본 스타일 (default) - 회색 테두리, 투명 배경 */
-  .post-body-desktop .notion-callout-default {
+  .post-body-desktop .notion-callout-default ,
+  .post-body .notion-callout-default {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
   }
 
   /* Callout {color} - 회색 테두리, 텍스트 기본 색상 적용 */
-  .post-body-desktop .notion-callout-blue {
+  .post-body-desktop .notion-callout-blue ,
+  .post-body .notion-callout-blue {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
   }
 
-  .post-body-desktop .notion-callout-red {
+  .post-body-desktop .notion-callout-red ,
+  .post-body .notion-callout-red {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
   }
 
-  .post-body-desktop .notion-callout-yellow {
+  .post-body-desktop .notion-callout-yellow ,
+  .post-body .notion-callout-yellow {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
   }
 
-  .post-body-desktop .notion-callout-green {
+  .post-body-desktop .notion-callout-green ,
+  .post-body .notion-callout-green {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
   }
 
-  .post-body-desktop .notion-callout-orange {
+  .post-body-desktop .notion-callout-orange ,
+  .post-body .notion-callout-orange {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
   }
 
-  .post-body-desktop .notion-callout-purple {
+  .post-body-desktop .notion-callout-purple ,
+  .post-body .notion-callout-purple {
     border-radius: 10px;
     border: 1px solid transparent;
     background: var(--c-purBacSec);
   }
 
-  .post-body-desktop .notion-callout-pink {
+  .post-body-desktop .notion-callout-pink ,
+  .post-body .notion-callout-pink {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
   }
 
-  .post-body-desktop .notion-callout-brown {
+  .post-body-desktop .notion-callout-brown ,
+  .post-body .notion-callout-brown {
     border-radius: 10px;
     border: 1px solid var(--ca-darDivCol);
     background-color: transparent;
@@ -970,55 +1669,64 @@ main.post-content-wrapper {
 
   /* Callout {color}_background - 배경색만, 테두리 없음 */
   .post-body-desktop .notion-callout-gray_background,
-  .post-body-desktop .notion-callout-grey_background {
+  .post-body-desktop .notion-callout-grey_background ,
+  .post-body .notion-callout-grey_background {
     border-radius: 10px;
     background-color: var(--ca-marEdiBacWhi);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-red_background {
+  .post-body-desktop .notion-callout-red_background ,
+  .post-body .notion-callout-red_background {
     border-radius: 10px;
     background-color: var(--ca-marEdiBacRed);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-yellow_background {
+  .post-body-desktop .notion-callout-yellow_background ,
+  .post-body .notion-callout-yellow_background {
     border-radius: 10px;
     background-color: var(--ca-marEdiBacYel);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-blue_background {
+  .post-body-desktop .notion-callout-blue_background ,
+  .post-body .notion-callout-blue_background {
     border-radius: 10px;
     background-color: var(--ca-marEdiBacBlu);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-green_background {
+  .post-body-desktop .notion-callout-green_background ,
+  .post-body .notion-callout-green_background {
     border-radius: 10px;
     background-color: var(--ca-greBacSecTra);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-orange_background {
+  .post-body-desktop .notion-callout-orange_background ,
+  .post-body .notion-callout-orange_background {
     border-radius: 10px;
     background-color: var(--ca-oraBacSecTra);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-purple_background {
+  .post-body-desktop .notion-callout-purple_background ,
+  .post-body .notion-callout-purple_background {
     border-radius: 10px;
     background-color: var(--ca-purBacSecTra);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-pink_background {
+  .post-body-desktop .notion-callout-pink_background ,
+  .post-body .notion-callout-pink_background {
     border-radius: 10px;
     background-color: var(--ca-pinBacSecTra);
     border: none;
   }
 
-  .post-body-desktop .notion-callout-brown_background {
+  .post-body-desktop .notion-callout-brown_background ,
+  .post-body .notion-callout-brown_background {
     border-radius: 10px;
     background-color: var(--ca-broBacSecTra);
     border: none;
@@ -1026,13 +1734,15 @@ main.post-content-wrapper {
 
   /* Callout Gray (특별 케이스) */
   .post-body-desktop .notion-callout-gray,
-  .post-body-desktop .notion-callout-grey {
+  .post-body-desktop .notion-callout-grey ,
+  .post-body .notion-callout-grey {
     border-radius: 10px;
     background-color: var(--ca-marEdiBacWhi);
     border-left: 3px solid var(--ca-marEdiBorWhi);
   }
 
-  .post-body-desktop .notion-callout-icon {
+  .post-body-desktop .notion-callout-icon ,
+  .post-body .notion-callout-icon {
     flex-shrink: 0;
     font-size: 1.25rem;
     line-height: 1.5;
@@ -1045,62 +1755,76 @@ main.post-content-wrapper {
   /* Callout Icon 색상 */
   .post-body-desktop .notion-callout-icon-default,
   .post-body-desktop .notion-callout-icon-gray,
-  .post-body-desktop .notion-callout-icon-grey {
+  .post-body-desktop .notion-callout-icon-grey ,
+  .post-body .notion-callout-icon-grey {
     color: var(--cl-marEdiIcoWhi);
   }
 
-  .post-body-desktop .notion-callout-icon-red {
+  .post-body-desktop .notion-callout-icon-red ,
+  .post-body .notion-callout-icon-red {
     color: var(--c-marEdiIcoRed);
   }
 
-  .post-body-desktop .notion-callout-icon-yellow {
+  .post-body-desktop .notion-callout-icon-yellow ,
+  .post-body .notion-callout-icon-yellow {
     color: var(--c-marEdiIcoYel);
   }
 
-  .post-body-desktop .notion-callout-icon-blue {
+  .post-body-desktop .notion-callout-icon-blue ,
+  .post-body .notion-callout-icon-blue {
     color: var(--c-marEdiIcoBlu);
   }
 
-  .post-body-desktop .notion-callout-content {
+  .post-body-desktop .notion-callout-content ,
+  .post-body .notion-callout-content {
     flex: 1;
     min-width: 0;
     line-height: 1.6;
   }
 
   /* Callout Content 기본 텍스트 색상 (default는 기본 색상) */
-  .post-body-desktop .notion-callout-content-blue {
+  .post-body-desktop .notion-callout-content-blue ,
+  .post-body .notion-callout-content-blue {
     color: var(--c-bluTexSec);
   }
 
-  .post-body-desktop .notion-callout-content-red {
+  .post-body-desktop .notion-callout-content-red ,
+  .post-body .notion-callout-content-red {
     color: var(--c-redTexSec);
   }
 
-  .post-body-desktop .notion-callout-content-yellow {
+  .post-body-desktop .notion-callout-content-yellow ,
+  .post-body .notion-callout-content-yellow {
     color: var(--c-yelTexSec);
   }
 
-  .post-body-desktop .notion-callout-content-green {
+  .post-body-desktop .notion-callout-content-green ,
+  .post-body .notion-callout-content-green {
     color: var(--c-greTexSec);
   }
 
-  .post-body-desktop .notion-callout-content-orange {
+  .post-body-desktop .notion-callout-content-orange ,
+  .post-body .notion-callout-content-orange {
     color: var(--c-oraTexSec);
   }
 
-  .post-body-desktop .notion-callout-content-purple {
+  .post-body-desktop .notion-callout-content-purple ,
+  .post-body .notion-callout-content-purple {
     color: var(--c-purTexSec);
   }
 
-  .post-body-desktop .notion-callout-content-pink {
+  .post-body-desktop .notion-callout-content-pink ,
+  .post-body .notion-callout-content-pink {
     color: var(--c-pinTexSec);
   }
 
-  .post-body-desktop .notion-callout-content-brown {
+  .post-body-desktop .notion-callout-content-brown ,
+  .post-body .notion-callout-content-brown {
     color: var(--c-broTexSec);
   }
 
-  .post-body-desktop .notion-callout-content p {
+  .post-body-desktop .notion-callout-content p ,
+  .post-body .notion-callout-content p {
     margin: 0 0 0.5rem 0;
     max-width: 100%;
     width: 100%;
@@ -1112,30 +1836,35 @@ main.post-content-wrapper {
     margin: 0;
   }
 
-  .post-body-desktop .notion-callout-content p:last-child {
+  .post-body-desktop .notion-callout-content p:last-child ,
+  .post-body .notion-callout-content p:last-child {
     margin-bottom: 0;
   }
 
   .post-body-desktop .notion-callout-content h1,
   .post-body-desktop .notion-callout-content h2,
-  .post-body-desktop .notion-callout-content h3 {
+  .post-body-desktop .notion-callout-content h3 ,
+  .post-body .notion-callout-content h3 {
     margin-top: 0.75rem;
     margin-bottom: 0.5rem;
   }
 
   .post-body-desktop .notion-callout-content h1:first-child,
   .post-body-desktop .notion-callout-content h2:first-child,
-  .post-body-desktop .notion-callout-content h3:first-child {
+  .post-body-desktop .notion-callout-content h3:first-child ,
+  .post-body .notion-callout-content h3:first-child {
     margin-top: 0;
   }
 
   .post-body-desktop .notion-callout-content ul,
-  .post-body-desktop .notion-callout-content ol {
+  .post-body-desktop .notion-callout-content ol ,
+  .post-body .notion-callout-content ol {
     margin: 0.5rem 0;
     padding-left: 1.5rem;
   }
 
-  .post-body-desktop .notion-callout-content code {
+  .post-body-desktop .notion-callout-content code ,
+  .post-body .notion-callout-content code {
     background-color: rgba(0, 0, 0, 0.05);
     padding: 0.15rem 0.3rem;
     border-radius: 3px;
@@ -1143,7 +1872,8 @@ main.post-content-wrapper {
   }
 
   /* callout 내부의 일반 pre (shiki가 아닌 경우) */
-  .post-body-desktop .notion-callout-content pre:not(.shiki) {
+  .post-body-desktop .notion-callout-content pre:not(.shiki) ,
+  .post-body .notion-callout-content pre:not(.shiki) {
     margin: 0.5rem 0;
     padding: 0.75rem;
     background-color: rgba(0, 0, 0, 0.05);
@@ -1152,16 +1882,19 @@ main.post-content-wrapper {
   }
 
   /* callout 내부의 shiki 코드 블록 */
-  .post-body-desktop .notion-callout-content .shiki-container {
+  .post-body-desktop .notion-callout-content .shiki-container ,
+  .post-body .notion-callout-content .shiki-container {
     margin: 0.5rem 0;
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
   }
 
-  .post-body-desktop .notion-inline-code-container {
+  .post-body-desktop .notion-inline-code-container ,
+  .post-body .notion-inline-code-container {
     display: inline;
   }
 
-  .post-body-desktop .notion-inline-code-container span {
+  .post-body-desktop .notion-inline-code-container span ,
+  .post-body .notion-inline-code-container span {
     font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
     line-height: normal;
     background: rgba(135, 131, 120, 0.15);
@@ -1174,7 +1907,8 @@ main.post-content-wrapper {
   }
 
   /* Notion To-Do Block 스타일 */
-  .post-body-desktop .notion-to-do-block {
+  .post-body-desktop .notion-to-do-block ,
+  .post-body .notion-to-do-block {
     display: block;
     width: 100%;
     max-width: 100%;
@@ -1184,11 +1918,13 @@ main.post-content-wrapper {
 
   .post-body-desktop .notion-to-do-block + h1,
   .post-body-desktop .notion-to-do-block + h2,
-  .post-body-desktop .notion-to-do-block + h3 {
+  .post-body-desktop .notion-to-do-block + h3 ,
+  .post-body .notion-to-do-block + h3 {
     margin-top: 2em;
   }
 
-  .post-body-desktop .notion-to-do-inner {
+  .post-body-desktop .notion-to-do-inner ,
+  .post-body .notion-to-do-inner {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -1198,7 +1934,8 @@ main.post-content-wrapper {
     fill: inherit;
   }
 
-  .post-body-desktop .notion-to-do-checkbox-wrapper {
+  .post-body-desktop .notion-to-do-checkbox-wrapper ,
+  .post-body .notion-to-do-checkbox-wrapper {
     user-select: none;
     margin-inline-end: 2px;
     width: 24px;
@@ -1212,7 +1949,8 @@ main.post-content-wrapper {
     align-self: flex-start;
   }
 
-  .post-body-desktop .notion-to-do-checkbox-inner {
+  .post-body-desktop .notion-to-do-checkbox-inner ,
+  .post-body .notion-to-do-checkbox-inner {
     position: relative;
     flex-shrink: 0;
     flex-grow: 0;
@@ -1227,18 +1965,21 @@ main.post-content-wrapper {
     background-color: transparent;
   }
 
-  .post-body-desktop .notion-to-do-checkbox-inner[data-checked="true"] {
+  .post-body-desktop .notion-to-do-checkbox-inner[data-checked="true"] ,
+  .post-body .notion-to-do-checkbox-inner[data-checked="true"] {
     background-color: rgb(46, 170, 220);
     border-color: rgb(46, 170, 220);
   }
 
-  .post-body-desktop .notion-to-do-checkbox-inner svg {
+  .post-body-desktop .notion-to-do-checkbox-inner svg ,
+  .post-body .notion-to-do-checkbox-inner svg {
     width: 16px;
     height: 16px;
     color: white;
   }
 
-  .post-body-desktop .notion-to-do-checkbox {
+  .post-body-desktop .notion-to-do-checkbox ,
+  .post-body .notion-to-do-checkbox {
     position: absolute;
     opacity: 0;
     width: 16px;
@@ -1248,7 +1989,8 @@ main.post-content-wrapper {
     pointer-events: none;
   }
 
-  .post-body-desktop .notion-to-do-content-wrapper {
+  .post-body-desktop .notion-to-do-content-wrapper ,
+  .post-body .notion-to-do-content-wrapper {
     flex: 1 1 0px;
     min-width: 1px;
     display: flex;
@@ -1256,7 +1998,8 @@ main.post-content-wrapper {
     align-items: flex-start;
   }
 
-  .post-body-desktop .notion-to-do-content {
+  .post-body-desktop .notion-to-do-content ,
+  .post-body .notion-to-do-content {
     max-width: 100%;
     white-space: break-spaces;
     word-break: break-word;
@@ -1271,7 +2014,8 @@ main.post-content-wrapper {
     width: 100%;
   }
 
-  .post-body-desktop .notion-to-do-content.notion-to-do-checked {
+  .post-body-desktop .notion-to-do-content.notion-to-do-checked ,
+  .post-body .notion-to-do-content.notion-to-do-checked {
     text-decoration-line: line-through;
     text-decoration-thickness: initial;
     text-decoration-style: initial;
@@ -1280,32 +2024,38 @@ main.post-content-wrapper {
   }
 
   /* Notion Toggle Block 스타일 */
-  .post-body-desktop .notion-toggle-block {
+  .post-body-desktop .notion-toggle-block ,
+  .post-body .notion-toggle-block {
     width: 100%;
     max-width: 100%;
     margin-top: 2px;
     margin-bottom: 2px;
   }
 
-  .post-body-desktop .notion-toggle-block details {
+  .post-body-desktop .notion-toggle-block details ,
+  .post-body .notion-toggle-block details {
     display: block;
     width: 100%;
   }
 
-  .post-body-desktop .notion-toggle-header {
+  .post-body-desktop .notion-toggle-header ,
+  .post-body .notion-toggle-header {
     width: 100%;
   }
 
-  .post-body-desktop .notion-toggle-header .notion-list-item-inner {
+  .post-body-desktop .notion-toggle-header .notion-list-item-inner ,
+  .post-body .notion-toggle-header .notion-list-item-inner {
     cursor: pointer;
   }
 
-  .post-body-desktop .notion-toggle-header .notion-list-item-inner:hover {
+  .post-body-desktop .notion-toggle-header .notion-list-item-inner:hover ,
+  .post-body .notion-toggle-header .notion-list-item-inner:hover {
     background-color: rgba(55, 53, 47, 0.03);
     border-radius: 3px;
   }
 
-  .post-body-desktop .notion-toggle-icon {
+  .post-body-desktop .notion-toggle-icon ,
+  .post-body .notion-toggle-icon {
     font-size: 12px;
     color: rgba(55, 53, 47, 0.4);
     transition: transform 0.2s ease;
@@ -1315,15 +2065,18 @@ main.post-content-wrapper {
     justify-content: center;
   }
 
-  .post-body-desktop .notion-toggle-icon::before {
+  .post-body-desktop .notion-toggle-icon::before ,
+  .post-body .notion-toggle-icon::before {
     content: '▶';
   }
 
-  .post-body-desktop .notion-toggle-block details[open] .notion-toggle-icon {
+  .post-body-desktop .notion-toggle-block details[open] .notion-toggle-icon ,
+  .post-body .notion-toggle-block details[open] .notion-toggle-icon {
     transform: rotate(90deg);
   }
 
-  .post-body-desktop .notion-toggle-header {
+  .post-body-desktop .notion-toggle-header ,
+  .post-body .notion-toggle-header {
     display: block;
     cursor: pointer;
     list-style: none;
@@ -1335,26 +2088,31 @@ main.post-content-wrapper {
     user-select: none;
   }
 
-  .post-body-desktop .notion-toggle-header::-webkit-details-marker {
+  .post-body-desktop .notion-toggle-header::-webkit-details-marker ,
+  .post-body .notion-toggle-header::-webkit-details-marker {
     display: none;
   }
 
-  .post-body-desktop .notion-toggle-header::marker {
+  .post-body-desktop .notion-toggle-header::marker ,
+  .post-body .notion-toggle-header::marker {
     display: none;
   }
 
-  .post-body-desktop .notion-toggle-content {
+  .post-body-desktop .notion-toggle-content ,
+  .post-body .notion-toggle-content {
     padding-inline-start: 26px;
     margin-top: 0;
     margin-bottom: 0;
   }
 
-  .post-body-desktop .notion-toggle-content > * {
+  .post-body-desktop .notion-toggle-content > * ,
+  .post-body .notion-toggle-content > * {
     margin-top: 1px;
     margin-bottom: 1px;
   }
 
-  .post-body-desktop .notion-toggle-content > p {
+  .post-body-desktop .notion-toggle-content > p ,
+  .post-body .notion-toggle-content > p {
     max-width: 100%;
     width: 100%;
     white-space: break-spaces;
@@ -1366,34 +2124,40 @@ main.post-content-wrapper {
 
   .post-body-desktop .notion-toggle-content > h1,
   .post-body-desktop .notion-toggle-content > h2,
-  .post-body-desktop .notion-toggle-content > h3 {
+  .post-body-desktop .notion-toggle-content > h3 ,
+  .post-body .notion-toggle-content > h3 {
     margin-top: 2rem;
     margin-bottom: 1rem;
   }
 
   .post-body-desktop .notion-toggle-content > .notion-bulleted-list-block,
-  .post-body-desktop .notion-toggle-content > .notion-numbered-list-block {
+  .post-body-desktop .notion-toggle-content > .notion-numbered-list-block ,
+  .post-body .notion-toggle-content > .notion-numbered-list-block {
     margin-top: 1px;
     margin-bottom: 1px;
   }
 
-  .post-body-desktop .notion-toggle-content > pre {
+  .post-body-desktop .notion-toggle-content > pre ,
+  .post-body .notion-toggle-content > pre {
     margin-top: 1rem;
     margin-bottom: 1rem;
   }
 
-  .post-body-desktop .notion-toggle-content > .notion-callout {
+  .post-body-desktop .notion-toggle-content > .notion-callout ,
+  .post-body .notion-toggle-content > .notion-callout {
     margin-top: 1rem;
     margin-bottom: 1rem;
   }
 
-  .post-body-desktop .notion-toggle-content > .notion-to-do-block {
+  .post-body-desktop .notion-toggle-content > .notion-to-do-block ,
+  .post-body .notion-toggle-content > .notion-to-do-block {
     margin-top: 1px;
     margin-bottom: 1px;
   }
 
   /* Notion Quote Block 스타일 */
-  .post-body-desktop blockquote {
+  .post-body-desktop blockquote ,
+  .post-body blockquote {
     margin: 0;
     font-size: 1em;
     padding-top: 3px;
@@ -1407,7 +2171,8 @@ main.post-content-wrapper {
     margin-bottom: 4px;
   }
 
-  .post-body-desktop blockquote > div {
+  .post-body-desktop blockquote > div ,
+  .post-body blockquote > div {
     border-inline-start: 3px solid currentcolor;
     padding-inline: 14px;
     width: 100%;
@@ -1415,7 +2180,8 @@ main.post-content-wrapper {
     flex-direction: column;
   }
 
-  .post-body-desktop blockquote p {
+  .post-body-desktop blockquote p ,
+  .post-body blockquote p {
     max-width: 100%;
     width: 100%;
     white-space: break-spaces;
@@ -1425,17 +2191,20 @@ main.post-content-wrapper {
     margin-bottom: 0;
   }
 
-  .post-body-desktop blockquote > div > *:not(p) {
+  .post-body-desktop blockquote > div > *:not(p) ,
+  .post-body blockquote > div > *:not(p) {
     margin-top: 2px;
     margin-bottom: 1px;
   }
 
-  .post-body-desktop blockquote > div > *:last-child {
+  .post-body-desktop blockquote > div > *:last-child ,
+  .post-body blockquote > div > *:last-child {
     margin-bottom: 0;
   }
 
   .post-body-desktop blockquote ul,
-  .post-body-desktop blockquote ol {
+  .post-body-desktop blockquote ol ,
+  .post-body blockquote ol {
     margin-top: 2px;
     margin-bottom: 1px;
     margin-left: 0;
@@ -1443,19 +2212,22 @@ main.post-content-wrapper {
   }
 
   .post-body-desktop blockquote ul:last-child,
-  .post-body-desktop blockquote ol:last-child {
+  .post-body-desktop blockquote ol:last-child ,
+  .post-body blockquote ol:last-child {
     margin-bottom: 0;
   }
 
   /* Notion Table Block 스타일 */
-  .post-body-desktop .notion-table-block {
+  .post-body-desktop .notion-table-block ,
+  .post-body .notion-table-block {
     width: 100%;
     margin-top: 4px;
     margin-bottom: 4px;
     overflow-x: auto;
   }
 
-  .post-body-desktop .notion-table {
+  .post-body-desktop .notion-table ,
+  .post-body .notion-table {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
@@ -1463,11 +2235,13 @@ main.post-content-wrapper {
     line-height: 1.5;
   }
 
-  .post-body-desktop .notion-table thead {
+  .post-body-desktop .notion-table thead ,
+  .post-body .notion-table thead {
     background-color: rgba(55, 53, 47, 0.09);
   }
 
-  .post-body-desktop .notion-table th {
+  .post-body-desktop .notion-table th ,
+  .post-body .notion-table th {
     font-weight: 600;
     text-align: left;
     padding: 6px 8px;
@@ -1475,40 +2249,48 @@ main.post-content-wrapper {
     min-width: 100px;
   }
 
-  .post-body-desktop .notion-table td {
+  .post-body-desktop .notion-table td ,
+  .post-body .notion-table td {
     padding: 6px 8px;
     border: 1px solid rgba(55, 53, 47, 0.16);
     min-width: 100px;
   }
 
-  .post-body-desktop .notion-table tbody tr:nth-child(even) {
+  .post-body-desktop .notion-table tbody tr:nth-child(even) ,
+  .post-body .notion-table tbody tr:nth-child(even) {
     background-color: rgba(55, 53, 47, 0.03);
   }
 
-  .post-body-desktop .notion-table tbody tr:hover {
+  .post-body-desktop .notion-table tbody tr:hover ,
+  .post-body .notion-table tbody tr:hover {
     background-color: rgba(55, 53, 47, 0.06);
   }
 
   .post-body-desktop .notion-table th:first-child,
-  .post-body-desktop .notion-table td:first-child {
+  .post-body-desktop .notion-table td:first-child ,
+  .post-body .notion-table td:first-child {
     border-left: none;
   }
 
   .post-body-desktop .notion-table th:last-child,
-  .post-body-desktop .notion-table td:last-child {
+  .post-body-desktop .notion-table td:last-child ,
+  .post-body .notion-table td:last-child {
     border-right: none;
   }
 
-  .post-body-desktop .notion-table thead tr th {
+  .post-body-desktop .notion-table thead tr th ,
+  .post-body .notion-table thead tr th {
     border-top: none;
   }
 
-  .post-body-desktop .notion-table tbody tr:last-child td {
+  .post-body-desktop .notion-table tbody tr:last-child td ,
+  .post-body .notion-table tbody tr:last-child td {
     border-bottom: none;
   }
 
   /* Notion Column List Block 스타일 */
-  .post-body-desktop .notion-column-list-block {
+  .post-body-desktop .notion-column-list-block ,
+  .post-body .notion-column-list-block {
     width: 100%;
     margin-top: 4px;
     margin-bottom: 4px;
@@ -1517,7 +2299,8 @@ main.post-content-wrapper {
     flex-grow: 1;
   }
 
-  .post-body-desktop .notion-column-resizer {
+  .post-body-desktop .notion-column-resizer ,
+  .post-body .notion-column-resizer {
     position: relative;
     width: 46px;
     flex-grow: 0;
@@ -1526,7 +2309,8 @@ main.post-content-wrapper {
     opacity: 0;
   }
 
-  .post-body-desktop .notion-column-resizer > div {
+  .post-body-desktop .notion-column-resizer > div ,
+  .post-body .notion-column-resizer > div {
     position: absolute;
     top: 0px;
     bottom: 0px;
@@ -1536,7 +2320,8 @@ main.post-content-wrapper {
     background: var(--ca-darDivCol);
   }
 
-  .post-body-desktop .notion-column-block {
+  .post-body-desktop .notion-column-block ,
+  .post-body .notion-column-block {
     padding-top: 12px;
     padding-bottom: 12px;
     flex-grow: 0;
@@ -1548,14 +2333,16 @@ main.post-content-wrapper {
     flex-direction: column;
   }
 
-  .post-body-desktop .notion-column-block > * {
+  .post-body-desktop .notion-column-block > * ,
+  .post-body .notion-column-block > * {
     width: 100%;
     max-width: 100%;
   }
 
   /* 일반 이미지 스타일 (북마크 이미지, mention 썸네일, favicon 제외) */
   .post-body-desktop p img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon),
-  .post-body-desktop img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon) {
+  .post-body-desktop img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon) ,
+  .post-body img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon) {
     display: block;
     max-width: 100%;
     width: 100%;
@@ -1563,24 +2350,28 @@ main.post-content-wrapper {
     text-align: center;
     margin: 1.5rem auto;
     margin-left: 0%;
+    border-radius: 10px;
     transition: width 0.3s ease, max-width 0.3s ease, margin-left 0.3s ease;
   }
 
   .post-body-desktop p img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon):hover,
-  .post-body-desktop img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon):hover {
+  .post-body-desktop img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon):hover ,
+  .post-body img:not(.notion-bookmark-image img):not(.notion-mention-thumbnail):not(.notion-bookmark-favicon):hover {
     margin-left: -5%;
     width: 110%;
     max-width: 110%;
   }
 
   /* Notion Bookmark Block 스타일 */
-  .post-body-desktop .notion-bookmark-block {
+  .post-body-desktop .notion-bookmark-block ,
+  .post-body .notion-bookmark-block {
     width: 100%;
     margin-top: 4px;
     margin-bottom: 4px;
   }
 
-  .post-body-desktop .notion-bookmark-link {
+  .post-body-desktop .notion-bookmark-link ,
+  .post-body .notion-bookmark-link {
     display: flex;
     color: inherit;
     text-decoration: none;
@@ -1599,18 +2390,21 @@ main.post-content-wrapper {
     fill: inherit;
   }
 
-  .post-body-desktop .notion-bookmark-link:hover {
+  .post-body-desktop .notion-bookmark-link:hover ,
+  .post-body .notion-bookmark-link:hover {
     background-color: rgba(55, 53, 47, 0.03);
   }
 
-  .post-body-desktop .notion-bookmark-text {
+  .post-body-desktop .notion-bookmark-text ,
+  .post-body .notion-bookmark-text {
     flex: 4 1 180px;
     padding: 12px 14px 14px;
     overflow: hidden;
     text-align: start;
   }
 
-  .post-body-desktop .notion-bookmark-title {
+  .post-body-desktop .notion-bookmark-title ,
+  .post-body .notion-bookmark-title {
     font-size: 14px;
     line-height: 20px;
     color: var(--c-texPri);
@@ -1621,7 +2415,8 @@ main.post-content-wrapper {
     margin-bottom: 2px;
   }
 
-  .post-body-desktop .notion-bookmark-description {
+  .post-body-desktop .notion-bookmark-description ,
+  .post-body .notion-bookmark-description {
     font-size: 12px;
     line-height: 16px;
     color: var(--c-texSec);
@@ -1633,7 +2428,8 @@ main.post-content-wrapper {
     -webkit-box-orient: vertical;
   }
 
-  .post-body-desktop .notion-bookmark-url {
+  .post-body-desktop .notion-bookmark-url ,
+  .post-body .notion-bookmark-url {
     display: flex;
     margin-top: 6px;
     font-size: 12px;
@@ -1644,7 +2440,8 @@ main.post-content-wrapper {
     text-overflow: ellipsis;
   }
 
-  .post-body-desktop .notion-bookmark-url svg {
+  .post-body-desktop .notion-bookmark-url svg ,
+  .post-body .notion-bookmark-url svg {
     flex-shrink: 0;
     width: 16px;
     height: 16px;
@@ -1652,7 +2449,8 @@ main.post-content-wrapper {
     color: rgba(55, 53, 47, 0.4);
   }
 
-  .post-body-desktop .notion-bookmark-favicon {
+  .post-body-desktop .notion-bookmark-favicon ,
+  .post-body .notion-bookmark-favicon {
     flex-shrink: 0;
     width: 16px;
     height: 16px;
@@ -1662,33 +2460,38 @@ main.post-content-wrapper {
     transition: none !important;
   }
 
-  .post-body-desktop .notion-bookmark-favicon:hover {
+  .post-body-desktop .notion-bookmark-favicon:hover ,
+  .post-body .notion-bookmark-favicon:hover {
     width: 16px !important;
     height: 16px !important;
     max-width: 16px !important;
     margin-left: 0 !important;
   }
 
-  .post-body-desktop .notion-bookmark-url span {
+  .post-body-desktop .notion-bookmark-url span ,
+  .post-body .notion-bookmark-url span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .post-body-desktop .notion-bookmark-image {
+  .post-body-desktop .notion-bookmark-image ,
+  .post-body .notion-bookmark-image {
     flex: 1 1 180px;
     display: block;
     position: relative;
   }
 
-  .post-body-desktop .notion-bookmark-image-wrapper {
+  .post-body-desktop .notion-bookmark-image-wrapper ,
+  .post-body .notion-bookmark-image-wrapper {
     position: absolute;
     top: 0px;
     inset-inline: 0px;
     bottom: 0px;
   }
 
-  .post-body-desktop .notion-bookmark-image-wrapper img {
+  .post-body-desktop .notion-bookmark-image-wrapper img ,
+  .post-body .notion-bookmark-image-wrapper img {
     width: 100%;
     height: 100%;
     display: block;
@@ -1697,7 +2500,8 @@ main.post-content-wrapper {
   }
 
   /* Notion Mention Block - 데스크톱용 */
-  .post-body-desktop .notion-mention-block {
+  .post-body-desktop .notion-mention-block ,
+  .post-body .notion-mention-block {
     width: 100%;
     margin-top: 3px;
     margin-bottom: 3px;
@@ -1706,7 +2510,8 @@ main.post-content-wrapper {
     padding-inline: 2px;
   }
 
-  .post-body-desktop .notion-mention-link {
+  .post-body-desktop .notion-mention-link ,
+  .post-body .notion-mention-link {
     display: inline-flex;
     align-items: center;
     color: inherit;
@@ -1714,7 +2519,8 @@ main.post-content-wrapper {
     cursor: pointer;
   }
 
-  .post-body-desktop .notion-mention-thumbnail {
+  .post-body-desktop .notion-mention-thumbnail ,
+  .post-body .notion-mention-thumbnail {
     width: 1.2em;
     height: 1.2em;
     border-radius: 3px;
@@ -1724,24 +2530,28 @@ main.post-content-wrapper {
     transition: none !important;
   }
 
-  .post-body-desktop .notion-mention-thumbnail:hover {
+  .post-body-desktop .notion-mention-thumbnail:hover ,
+  .post-body .notion-mention-thumbnail:hover {
     width: 1.2em !important;
     height: 1.2em !important;
     max-width: 1.2em !important;
     margin-left: 0 !important;
   }
 
-  .post-body-desktop .notion-mention-content {
+  .post-body-desktop .notion-mention-content ,
+  .post-body .notion-mention-content {
     display: inline-flex;
     align-items: center;
   }
 
-  .post-body-desktop .notion-mention-author {
+  .post-body-desktop .notion-mention-author ,
+  .post-body .notion-mention-author {
     color: var(--c-texSec);
     margin-inline-end: 0.3em;
   }
 
-  .post-body-desktop .notion-mention-title {
+  .post-body-desktop .notion-mention-title ,
+  .post-body .notion-mention-title {
     text-decoration: underline;
     text-decoration-thickness: 0.05em;
     text-decoration-color: var(--cl-linDecCol);
@@ -1771,18 +2581,121 @@ main.post-content-wrapper {
   opacity: 0.8;
 }
 
-/* 중복 제거됨 - 위쪽 공통 스타일 사용 */
+/* 공통 스타일 - 모든 사이즈에 적용 (.post-body-desktop와 .post-body 모두) */
+.post-body-desktop,
+.post-body {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 80px;
+}
 
-/* 반응형 디자인 */
+.post-body-desktop > *,
+.post-body > * {
+  width: 100%;
+  color: inherit;
+  fill: inherit;
+}
+
+.post-body-desktop ul,
+.post-body-desktop ol,
+.post-body-desktop blockquote,
+.post-body-desktop pre,
+.post-body ul,
+.post-body ol,
+.post-body blockquote,
+.post-body pre {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-body-desktop p,
+.post-body p {
+  max-width: 100%;
+  width: 100%;
+  white-space: break-spaces;
+  word-break: break-word;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-inline: 2px;
+  font-size: 16px;
+  margin: 0;
+}
+
+.post-body-desktop h1,
+.post-body-desktop h2,
+.post-body-desktop h3,
+.post-body h1,
+.post-body h2,
+.post-body h3 {
+  scroll-margin-top: 100px;
+}
+
+.post-body-desktop h1,
+.post-body h1 {
+  font-size: 1.875em;
+  margin-top: 2rem;
+  color: #1a1a1a;
+}
+
+.post-body-desktop h2,
+.post-body h2 {
+  font-size: 1.5em;
+  margin-top: 2rem;
+  color: #1a1a1a;
+}
+
+.post-body-desktop h3,
+.post-body h3 {
+  font-size: 1.25em;
+  margin-top: 1.5rem;
+  color: #1a1a1a;
+}
+
+/* 다크모드 헤딩 색상 */
+.dark .post-body-desktop h1,
+.dark .post-body-desktop h2,
+.dark .post-body-desktop h3,
+.dark .post-body h1,
+.dark .post-body h2,
+.dark .post-body h3 {
+  color: #e0e0e0;
+}
+
+/* Reset ul, ol 기본 스타일 - 공통 */
+.post-body-desktop ul,
+.post-body-desktop ol,
+.post-body ul,
+.post-body ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 반응형 디자인 - 여백만 조정 */
 @media (max-width: 1023px) {
   .post-content-wrapper {
     padding: 1.5rem 1rem;
+    padding-top: calc(1.5rem + 60px);
   }
 }
 
 @media (max-width: 768px) {
   .post-content-wrapper {
     padding: 1rem 0.75rem;
+    padding-top: calc(1rem + 60px);
+  }
+  
+  .post-body-desktop h1,
+  .post-body h1 {
+    scroll-margin-top: 80px;
+  }
+  
+  .post-body-desktop h2,
+  .post-body-desktop h3,
+  .post-body h2,
+  .post-body h3 {
+    scroll-margin-top: 70px;
   }
 }
 
@@ -1914,17 +2827,22 @@ main.post-content-wrapper {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 0.375rem 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
+  padding: 0.35rem 0.75rem;
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.8);
   font-size: 0.75rem;
   font-weight: 500;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.05em;
   border-bottom-left-radius: 8px;
   font-family: 'Fira Code', 'SF Mono', SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace;
   z-index: 10;
   backdrop-filter: blur(4px);
+}
+
+.dark .post-body .shiki-lang-label {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* 복사 버튼이 있을 때 언어 라벨 위치 조정 - 모바일 */
@@ -1980,6 +2898,7 @@ main.post-content-wrapper {
   text-align: center;
   margin: 1.5rem auto;
   margin-left: 0%;
+  border-radius: 10px;
   transition: width 0.3s ease, max-width 0.3s ease, margin-left 0.3s ease;
 }
 

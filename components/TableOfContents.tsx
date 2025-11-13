@@ -39,31 +39,34 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
       const scrollY = window.scrollY
       const postBodyTop = postBodyRect.top + scrollY
       
-      // 우측 위치 계산 (grid의 4번째 컬럼 위치에 맞춤)
-      const wrapper = document.querySelector('.post-content-wrapper') as HTMLElement
-      let rightOffset = 0
-      if (wrapper) {
-        const wrapperRect = wrapper.getBoundingClientRect()
-        const wrapperRight = wrapperRect.right
-        rightOffset = window.innerWidth - wrapperRight + 96 // grid의 4번째 컬럼 시작 위치
-      }
+      // 본문 콘텐츠 영역의 우측 끝 위치 계산
+      const contentElement = document.querySelector('.post-content-desktop') as HTMLElement
+      const wrapperElement = document.querySelector('.post-content-wrapper') as HTMLElement
+      if (!contentElement || !wrapperElement) return
+      
+      const contentRect = contentElement.getBoundingClientRect()
+      const wrapperRect = wrapperElement.getBoundingClientRect()
       
       // 본문 시작 위치를 넘어가면 floating
       if (scrollY + 100 >= postBodyTop) {
         setIsFloating(true)
-        // floating 상태일 때는 fixed positioning
+        // floating 상태일 때는 fixed positioning (본문 우측 끝에서 72px)
+        const contentRightFixed = contentRect.right // 현재 화면 기준
         tocElement.style.position = 'fixed'
         tocElement.style.top = '100px'
-        tocElement.style.right = `${rightOffset}px`
-        tocElement.style.left = ''
+        tocElement.style.left = `${contentRightFixed + 72}px`
+        tocElement.style.right = ''
       } else {
         setIsFloating(false)
-        // 본문 시작 위치에 맞춰서 위치
+        // absolute일 때는 부모(wrapper) 기준으로 계산 (본문 우측 끝에서 72px)
         const postBodyTopPosition = postBodyRect.top + scrollY
+        const contentRightAbsolute = contentRect.right + scrollY // 절대 위치
+        const wrapperLeftAbsolute = wrapperRect.left + scrollY // 부모의 절대 위치
+        const leftRelativeToWrapper = contentRightAbsolute - wrapperLeftAbsolute + 72 // 부모 기준 상대 위치
         tocElement.style.position = 'absolute'
         tocElement.style.top = `${postBodyTopPosition}px`
-        tocElement.style.right = `${rightOffset}px`
-        tocElement.style.left = ''
+        tocElement.style.left = `${leftRelativeToWrapper}px`
+        tocElement.style.right = ''
       }
     }
     
@@ -140,10 +143,13 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
       
       const targetElement = document.getElementById(decodedId)
       if (targetElement) {
-        const elementPosition = targetElement.getBoundingClientRect().top
-        const offsetPosition = elementPosition + window.scrollY - 100
+        // 요소의 절대 위치 계산
+        const rect = targetElement.getBoundingClientRect()
+        const absoluteTop = rect.top + window.scrollY
+        const offsetPosition = absoluteTop - 100 // 상단에서 100px 여백
+        
         window.scrollTo({
-          top: offsetPosition,
+          top: Math.max(0, offsetPosition), // 음수 방지
           behavior: 'smooth'
         })
         setActiveId(decodedId)
@@ -179,31 +185,34 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
         const scrollY = window.scrollY
         const postBodyTop = postBodyRect.top + scrollY
         
-        // 우측 위치 계산 (grid의 4번째 컬럼 위치에 맞춤)
-        const wrapper = document.querySelector('.post-content-wrapper') as HTMLElement
-        let rightOffset = 0
-        if (wrapper) {
-          const wrapperRect = wrapper.getBoundingClientRect()
-          const wrapperRight = wrapperRect.right
-          rightOffset = window.innerWidth - wrapperRight + 96 // grid의 4번째 컬럼 시작 위치
-        }
+        // 본문 콘텐츠 영역의 우측 끝 위치 계산
+        const contentElement = document.querySelector('.post-content-desktop') as HTMLElement
+        const wrapperElement = document.querySelector('.post-content-wrapper') as HTMLElement
+        if (!contentElement || !wrapperElement) return
+        
+        const contentRect = contentElement.getBoundingClientRect()
+        const wrapperRect = wrapperElement.getBoundingClientRect()
         
         // 본문 시작 위치를 넘어가면 floating
         if (scrollY + 100 >= postBodyTop) {
           setIsFloating(true)
-          // floating 상태일 때는 fixed positioning
+          // floating 상태일 때는 fixed positioning (본문 우측 끝에서 72px)
+          const contentRightFixed = contentRect.right // 현재 화면 기준
           tocElement.style.position = 'fixed'
           tocElement.style.top = '100px'
-          tocElement.style.right = `${rightOffset}px`
-          tocElement.style.left = ''
+          tocElement.style.left = `${contentRightFixed + 72}px`
+          tocElement.style.right = ''
         } else {
           setIsFloating(false)
-          // 본문 시작 위치에 맞춰서 위치
+          // absolute일 때는 부모(wrapper) 기준으로 계산 (본문 우측 끝에서 72px)
           const postBodyTopPosition = postBodyRect.top + scrollY
+          const contentRightAbsolute = contentRect.right + scrollY // 절대 위치
+          const wrapperLeftAbsolute = wrapperRect.left + scrollY // 부모의 절대 위치
+          const leftRelativeToWrapper = contentRightAbsolute - wrapperLeftAbsolute + 72 // 부모 기준 상대 위치
           tocElement.style.position = 'absolute'
           tocElement.style.top = `${postBodyTopPosition}px`
-          tocElement.style.right = `${rightOffset}px`
-          tocElement.style.left = ''
+          tocElement.style.left = `${leftRelativeToWrapper}px`
+          tocElement.style.right = ''
         }
       }
 
@@ -292,11 +301,14 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
                     e.preventDefault()
                     const element = document.getElementById(item.id)
                     if (element) {
-                      const elementPosition = element.getBoundingClientRect().top
-                      const offsetPosition = elementPosition + window.scrollY - 100
+                      // scrollIntoView를 사용하여 더 안정적으로 스크롤
+                      const rect = element.getBoundingClientRect()
+                      const absoluteTop = rect.top + window.scrollY
+                      const offsetPosition = absoluteTop - 100 // 상단에서 100px 여백
                       
+                      // 먼저 정확한 위치로 스크롤
                       window.scrollTo({
-                        top: offsetPosition,
+                        top: Math.max(0, offsetPosition),
                         behavior: 'smooth'
                       })
                       
