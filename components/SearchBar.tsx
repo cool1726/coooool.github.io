@@ -145,3 +145,4 @@ export default function SearchBar({ isOpen, onClose }: SearchBarProps) {
   )
 }
 
+
