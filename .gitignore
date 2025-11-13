@@ -35,5 +35,4 @@ next-env.d.ts
 
 # notion data
 /data/posts.json
-# data/posts/ 디렉토리는 Git에 포함 (개별 포스트 파일)
-/data/posts/
+/data/posts
